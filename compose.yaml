@@ -1,0 +1,71 @@
+name: myservice-platform
+
+services:
+  postgres:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-myservice}
+      POSTGRES_USER: ${POSTGRES_USER:-myservice}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-myservice}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-myservice} -d ${POSTGRES_DB:-myservice}"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  rabbitmq:
+    image: rabbitmq:4-management-alpine
+    environment:
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_DEFAULT_USER:-myservice}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_DEFAULT_PASS:-myservice}
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 12
+
+  order-api:
+    build:
+      context: services/order-service
+    environment:
+      DATABASE_URL: ${DATABASE_URL:-postgresql+asyncpg://myservice:myservice@postgres:5432/myservice}
+      RABBITMQ_URL: ${RABBITMQ_URL:-amqp://myservice:myservice@rabbitmq:5672/}
+    command: ["sh", "-c", "alembic upgrade head && uvicorn app.main:app --host 0.0.0.0 --port 8000"]
+    ports:
+      - "8000:8000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/health/ready')"]
+      interval: 5s
+      timeout: 3s
+      retries: 12
+
+  order-worker:
+    build:
+      context: services/order-service
+    environment:
+      DATABASE_URL: ${DATABASE_URL:-postgresql+asyncpg://myservice:myservice@postgres:5432/myservice}
+      RABBITMQ_URL: ${RABBITMQ_URL:-amqp://myservice:myservice@rabbitmq:5672/}
+      OUTBOX_POLL_INTERVAL: ${OUTBOX_POLL_INTERVAL:-1}
+    command: ["python", "-m", "app.outbox_worker"]
+    restart: on-failure
+    depends_on:
+      order-api:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+
+volumes:
+  postgres_data:
+  rabbitmq_data:

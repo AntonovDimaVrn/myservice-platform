@@ -3,6 +3,11 @@ __pycache__/
 *.py[cod]
 .env
 .pytest_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+*.egg-info/
+.python-version
 .idea/
 .vscode/
 .DS_Store
