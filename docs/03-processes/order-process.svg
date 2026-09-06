@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1500" height="480" viewBox="0 0 1500 480">
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z" fill="#333" /></marker>
+    <style>text{font-family:Arial,sans-serif;font-size:14px;fill:#111}.lane{fill:#fafafa;stroke:#777}.task{fill:#fff;stroke:#333;rx:6}.flow{stroke:#333;stroke-width:2;fill:none;marker-end:url(#arrow)}.label{font-size:13px}.title{font-size:18px;font-weight:bold}</style>
+  </defs>
+  <text x="20" y="26" class="title">Оформление и выполнение заказа</text>
+  <rect x="20" y="45" width="1460" height="95" class="lane"/><rect x="20" y="140" width="1460" height="95" class="lane"/><rect x="20" y="235" width="1460" height="95" class="lane"/><rect x="20" y="330" width="1460" height="95" class="lane"/>
+  <text x="34" y="68">Клиент</text><text x="34" y="163">Система</text><text x="34" y="258">Оператор</text><text x="34" y="353">Мастер</text>
+  <circle cx="130" cy="96" r="17" fill="#fff" stroke="#333" stroke-width="2"/><text x="112" y="126" class="label">Старт</text>
+  <rect x="180" y="70" width="125" height="52" class="task"/><text x="199" y="92">Выбрать</text><text x="199" y="109">услугу</text>
+  <rect x="350" y="165" width="125" height="52" class="task"/><text x="367" y="188">Рассчитать</text><text x="367" y="205">цену</text>
+  <polygon points="525,96 555,66 585,96 555,126" fill="#fff" stroke="#333"/><text x="521" y="56" class="label">Цена?</text>
+  <rect x="625" y="70" width="135" height="52" class="task"/><text x="642" y="92">Передать данные</text><text x="642" y="109">заказа</text>
+  <rect x="805" y="165" width="125" height="52" class="task"/><text x="824" y="188">Сохранить</text><text x="824" y="205">заказ</text>
+  <rect x="975" y="260" width="135" height="52" class="task"/><text x="993" y="283">Подтвердить</text><text x="993" y="300">заказ</text>
+  <polygon points="1160,286 1190,256 1220,286 1190,316" fill="#fff" stroke="#333"/><text x="1157" y="246" class="label">Принят?</text>
+  <rect x="1260" y="260" width="130" height="52" class="task"/><text x="1278" y="283">Назначить</text><text x="1278" y="300">мастера</text>
+  <rect x="1260" y="165" width="130" height="52" class="task"/><text x="1277" y="188">Уведомить</text><text x="1277" y="205">участников</text>
+  <rect x="1080" y="355" width="130" height="52" class="task"/><text x="1098" y="378">Выполнить</text><text x="1098" y="395">работу</text>
+  <rect x="870" y="355" width="150" height="52" class="task"/><text x="887" y="378">Зафиксировать</text><text x="887" y="395">результат</text>
+  <circle cx="790" cy="381" r="17" fill="#fff" stroke="#333" stroke-width="4"/><text x="760" y="414" class="label">Готово</text>
+  <path d="M147 96 L180 96" class="flow"/><path d="M305 96 L330 96 L330 191 L350 191" class="flow"/><path d="M475 191 L500 191 L500 96 L525 96" class="flow"/><path d="M585 96 L625 96" class="flow"/><path d="M760 96 L785 96 L785 191 L805 191" class="flow"/><path d="M930 191 L950 191 L950 286 L975 286" class="flow"/><path d="M1110 286 L1160 286" class="flow"/><path d="M1220 286 L1260 286" class="flow"/><path d="M1325 260 L1325 217" class="flow"/><path d="M1260 191 L1235 191 L1235 381 L1210 381" class="flow"/><path d="M1080 381 L1020 381" class="flow"/><path d="M870 381 L807 381" class="flow"/>
+  <text x="594" y="88" class="label">да</text><text x="1228" y="278" class="label">да</text>
+  <path d="M555 126 L555 140" class="flow"/><text x="566" y="139" class="label">нет, завершение</text>
+  <path d="M1190 256 L1190 235" class="flow"/><text x="1200" y="235" class="label">нет, отклонение</text>
+</svg>

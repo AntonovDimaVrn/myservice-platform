@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="Definitions_Order" targetNamespace="http://myservice-platform.local/bpmn">
+  <bpmn:process id="Process_Order" name="Оформление и выполнение заказа" isExecutable="false">
+    <bpmn:laneSet id="LaneSet_Order">
+      <bpmn:lane id="Lane_Client" name="Клиент">
+        <bpmn:flowNodeRef>StartEvent_Need</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Task_Select</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Gateway_Price</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Task_Submit</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>EndEvent_Declined</bpmn:flowNodeRef>
+      </bpmn:lane>
+      <bpmn:lane id="Lane_System" name="Система">
+        <bpmn:flowNodeRef>Task_Calculate</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Task_Save</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Task_Notify</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>EndEvent_Rejected</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>EndEvent_Completed</bpmn:flowNodeRef>
+      </bpmn:lane>
+      <bpmn:lane id="Lane_Operator" name="Оператор">
+        <bpmn:flowNodeRef>Task_Confirm</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Gateway_Confirm</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Task_Assign</bpmn:flowNodeRef>
+      </bpmn:lane>
+      <bpmn:lane id="Lane_Master" name="Мастер">
+        <bpmn:flowNodeRef>Task_Perform</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Task_Complete</bpmn:flowNodeRef>
+      </bpmn:lane>
+    </bpmn:laneSet>
+    <bpmn:startEvent id="StartEvent_Need" name="Нужна услуга" />
+    <bpmn:userTask id="Task_Select" name="Выбрать услугу" />
+    <bpmn:serviceTask id="Task_Calculate" name="Рассчитать цену" />
+    <bpmn:exclusiveGateway id="Gateway_Price" name="Цена подходит?" />
+    <bpmn:userTask id="Task_Submit" name="Передать данные заказа" />
+    <bpmn:serviceTask id="Task_Save" name="Сохранить заказ" />
+    <bpmn:userTask id="Task_Confirm" name="Проверить и подтвердить" />
+    <bpmn:exclusiveGateway id="Gateway_Confirm" name="Заказ подтверждён?" />
+    <bpmn:userTask id="Task_Assign" name="Назначить мастера" />
+    <bpmn:serviceTask id="Task_Notify" name="Отправить уведомления" />
+    <bpmn:userTask id="Task_Perform" name="Выполнить работу" />
+    <bpmn:userTask id="Task_Complete" name="Зафиксировать результат" />
+    <bpmn:endEvent id="EndEvent_Declined" name="Отказ от цены" />
+    <bpmn:endEvent id="EndEvent_Rejected" name="Заказ отклонён" />
+    <bpmn:endEvent id="EndEvent_Completed" name="Заказ завершён" />
+    <bpmn:sequenceFlow id="Flow_01" sourceRef="StartEvent_Need" targetRef="Task_Select" />
+    <bpmn:sequenceFlow id="Flow_02" sourceRef="Task_Select" targetRef="Task_Calculate" />
+    <bpmn:sequenceFlow id="Flow_03" sourceRef="Task_Calculate" targetRef="Gateway_Price" />
+    <bpmn:sequenceFlow id="Flow_04" name="Да" sourceRef="Gateway_Price" targetRef="Task_Submit" />
+    <bpmn:sequenceFlow id="Flow_05" name="Нет" sourceRef="Gateway_Price" targetRef="EndEvent_Declined" />
+    <bpmn:sequenceFlow id="Flow_06" sourceRef="Task_Submit" targetRef="Task_Save" />
+    <bpmn:sequenceFlow id="Flow_07" sourceRef="Task_Save" targetRef="Task_Confirm" />
+    <bpmn:sequenceFlow id="Flow_08" sourceRef="Task_Confirm" targetRef="Gateway_Confirm" />
+    <bpmn:sequenceFlow id="Flow_09" name="Да" sourceRef="Gateway_Confirm" targetRef="Task_Assign" />
+    <bpmn:sequenceFlow id="Flow_10" name="Нет" sourceRef="Gateway_Confirm" targetRef="EndEvent_Rejected" />
+    <bpmn:sequenceFlow id="Flow_11" sourceRef="Task_Assign" targetRef="Task_Notify" />
+    <bpmn:sequenceFlow id="Flow_12" sourceRef="Task_Notify" targetRef="Task_Perform" />
+    <bpmn:sequenceFlow id="Flow_13" sourceRef="Task_Perform" targetRef="Task_Complete" />
+    <bpmn:sequenceFlow id="Flow_14" sourceRef="Task_Complete" targetRef="EndEvent_Completed" />
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_Order">
+    <bpmndi:BPMNPlane id="BPMNPlane_Order" bpmnElement="Process_Order">
+      <bpmndi:BPMNShape id="Lane_Client_di" bpmnElement="Lane_Client" isHorizontal="true"><dc:Bounds x="120" y="80" width="1740" height="140" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Lane_System_di" bpmnElement="Lane_System" isHorizontal="true"><dc:Bounds x="120" y="220" width="1740" height="140" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Lane_Operator_di" bpmnElement="Lane_Operator" isHorizontal="true"><dc:Bounds x="120" y="360" width="1740" height="140" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Lane_Master_di" bpmnElement="Lane_Master" isHorizontal="true"><dc:Bounds x="120" y="500" width="1740" height="140" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="StartEvent_Need_di" bpmnElement="StartEvent_Need"><dc:Bounds x="180" y="132" width="36" height="36" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_Select_di" bpmnElement="Task_Select"><dc:Bounds x="260" y="110" width="120" height="80" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_Calculate_di" bpmnElement="Task_Calculate"><dc:Bounds x="420" y="250" width="120" height="80" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_Price_di" bpmnElement="Gateway_Price" isMarkerVisible="true"><dc:Bounds x="580" y="125" width="50" height="50" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_Submit_di" bpmnElement="Task_Submit"><dc:Bounds x="680" y="110" width="130" height="80" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="EndEvent_Declined_di" bpmnElement="EndEvent_Declined"><dc:Bounds x="690" y="250" width="36" height="36" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_Save_di" bpmnElement="Task_Save"><dc:Bounds x="850" y="250" width="120" height="80" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_Confirm_di" bpmnElement="Task_Confirm"><dc:Bounds x="1010" y="390" width="130" height="80" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_Confirm_di" bpmnElement="Gateway_Confirm" isMarkerVisible="true"><dc:Bounds x="1180" y="405" width="50" height="50" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="EndEvent_Rejected_di" bpmnElement="EndEvent_Rejected"><dc:Bounds x="1190" y="272" width="36" height="36" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_Assign_di" bpmnElement="Task_Assign"><dc:Bounds x="1280" y="390" width="130" height="80" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_Notify_di" bpmnElement="Task_Notify"><dc:Bounds x="1450" y="250" width="130" height="80" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_Perform_di" bpmnElement="Task_Perform"><dc:Bounds x="1450" y="530" width="130" height="80" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_Complete_di" bpmnElement="Task_Complete"><dc:Bounds x="1620" y="530" width="130" height="80" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="EndEvent_Completed_di" bpmnElement="EndEvent_Completed"><dc:Bounds x="1780" y="272" width="36" height="36" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_01_di" bpmnElement="Flow_01"><di:waypoint x="216" y="150" /><di:waypoint x="260" y="150" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_02_di" bpmnElement="Flow_02"><di:waypoint x="380" y="150" /><di:waypoint x="400" y="150" /><di:waypoint x="400" y="290" /><di:waypoint x="420" y="290" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_03_di" bpmnElement="Flow_03"><di:waypoint x="540" y="290" /><di:waypoint x="560" y="290" /><di:waypoint x="560" y="150" /><di:waypoint x="580" y="150" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_04_di" bpmnElement="Flow_04"><di:waypoint x="630" y="150" /><di:waypoint x="680" y="150" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_05_di" bpmnElement="Flow_05"><di:waypoint x="605" y="175" /><di:waypoint x="605" y="268" /><di:waypoint x="690" y="268" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_06_di" bpmnElement="Flow_06"><di:waypoint x="810" y="150" /><di:waypoint x="830" y="150" /><di:waypoint x="830" y="290" /><di:waypoint x="850" y="290" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_07_di" bpmnElement="Flow_07"><di:waypoint x="970" y="290" /><di:waypoint x="990" y="290" /><di:waypoint x="990" y="430" /><di:waypoint x="1010" y="430" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_08_di" bpmnElement="Flow_08"><di:waypoint x="1140" y="430" /><di:waypoint x="1180" y="430" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_09_di" bpmnElement="Flow_09"><di:waypoint x="1230" y="430" /><di:waypoint x="1280" y="430" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_10_di" bpmnElement="Flow_10"><di:waypoint x="1205" y="405" /><di:waypoint x="1205" y="308" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_11_di" bpmnElement="Flow_11"><di:waypoint x="1410" y="430" /><di:waypoint x="1430" y="430" /><di:waypoint x="1430" y="290" /><di:waypoint x="1450" y="290" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_12_di" bpmnElement="Flow_12"><di:waypoint x="1515" y="330" /><di:waypoint x="1515" y="530" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_13_di" bpmnElement="Flow_13"><di:waypoint x="1580" y="570" /><di:waypoint x="1620" y="570" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_14_di" bpmnElement="Flow_14"><di:waypoint x="1750" y="570" /><di:waypoint x="1798" y="570" /><di:waypoint x="1798" y="308" /></bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>
