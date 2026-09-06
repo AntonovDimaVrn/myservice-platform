@@ -1,0 +1,17 @@
+@startuml
+!pragma layout smetana
+title UML - состояния заказа
+skinparam shadowing false
+
+[*] --> new : заказ создан
+new --> confirmed : оператор подтвердил
+new --> cancelled : клиент отказался
+new --> cancelled : оператор отклонил
+confirmed --> assigned : мастер назначен
+confirmed --> cancelled : заказ отменён
+assigned --> in_progress : мастер начал работу
+assigned --> cancelled : заказ отменён
+in_progress --> completed : работа завершена
+completed --> [*]
+cancelled --> [*]
+@enduml
