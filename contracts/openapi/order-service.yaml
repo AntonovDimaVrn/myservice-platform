@@ -1,0 +1,162 @@
+openapi: 3.1.0
+info:
+  title: MyService Order API
+  version: 0.1.0
+  description: Создание и просмотр заказа в техническом прототипе.
+servers:
+  - url: http://localhost:8000
+security: []
+paths:
+  /api/v1/orders:
+    post:
+      operationId: createOrder
+      summary: Создать заказ
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateOrderRequest'
+      responses:
+        '201':
+          description: Заказ создан
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Order'
+        '422':
+          description: Ошибка входных данных
+  /api/v1/orders/{orderId}:
+    get:
+      operationId: getOrder
+      summary: Получить заказ
+      parameters:
+        - name: orderId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Заказ найден
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Order'
+        '404':
+          description: Заказ не найден
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /health/live:
+    get:
+      operationId: live
+      summary: Проверить процесс API
+      responses:
+        '200':
+          description: API работает
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Health'
+  /health/ready:
+    get:
+      operationId: ready
+      summary: Проверить соединение с базой
+      responses:
+        '200':
+          description: API готов
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Health'
+        '503':
+          description: База недоступна
+components:
+  schemas:
+    ServiceType:
+      type: string
+      enum:
+        - dry_cleaning
+        - cleaning
+        - disinsection
+        - disinfection
+    OrderStatus:
+      type: string
+      enum:
+        - new
+        - confirmed
+        - assigned
+        - in_progress
+        - completed
+        - cancelled
+    CreateOrderRequest:
+      type: object
+      additionalProperties: false
+      required:
+        - serviceType
+        - customerName
+        - customerPhone
+        - address
+        - desiredAt
+      properties:
+        serviceType:
+          $ref: '#/components/schemas/ServiceType'
+        customerName:
+          type: string
+          minLength: 2
+          maxLength: 120
+        customerPhone:
+          type: string
+          pattern: '^\+[1-9][0-9]{7,14}$'
+        address:
+          type: string
+          minLength: 5
+          maxLength: 500
+        desiredAt:
+          type: string
+          format: date-time
+        comment:
+          type:
+            - string
+            - 'null'
+          maxLength: 1000
+    Order:
+      allOf:
+        - $ref: '#/components/schemas/CreateOrderRequest'
+        - type: object
+          required:
+            - id
+            - status
+            - createdAt
+            - updatedAt
+          properties:
+            id:
+              type: string
+              format: uuid
+            status:
+              $ref: '#/components/schemas/OrderStatus'
+            createdAt:
+              type: string
+              format: date-time
+            updatedAt:
+              type: string
+              format: date-time
+    Health:
+      type: object
+      required:
+        - status
+      properties:
+        status:
+          type: string
+          enum:
+            - ok
+    Error:
+      type: object
+      required:
+        - detail
+      properties:
+        detail:
+          type: string

@@ -1,0 +1,26 @@
+@startuml
+!pragma layout smetana
+title Обмен через RabbitMQ
+left to right direction
+skinparam shadowing false
+
+component "Order API" as api
+database "orders\noutbox_events" as db
+component "Outbox Worker" as worker
+queue "Exchange\norders.events" as exchange
+queue "notification.order-created" as nq
+queue "analytics.order-created" as aq
+queue "Dead letter queue" as dlq
+component "Notification Service" as notification
+component "Analytics Service" as analytics
+
+api --> db : одна транзакция
+db --> worker : неопубликованные события
+worker --> exchange : order.created.v1
+exchange --> nq : routing key
+exchange --> aq : routing key
+nq --> notification
+aq --> analytics
+nq --> dlq : после лимита попыток
+aq --> dlq : после лимита попыток
+@enduml

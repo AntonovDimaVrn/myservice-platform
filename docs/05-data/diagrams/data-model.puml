@@ -1,0 +1,117 @@
+@startuml
+!pragma layout smetana
+title ER - данные системы
+hide methods
+hide stereotypes
+skinparam shadowing false
+
+entity Customer {
+  * id : uuid
+  --
+  name : string
+  phone : string
+}
+
+entity Service {
+  * id : uuid
+  --
+  type : string
+  name : string
+  active : boolean
+}
+
+entity Order {
+  * id : uuid
+  --
+  customer_id : uuid
+  status : string
+  address : string
+  desired_at : datetime
+  created_at : datetime
+}
+
+entity OrderItem {
+  * id : uuid
+  --
+  order_id : uuid
+  service_id : uuid
+  quantity : decimal
+  price : decimal
+}
+
+entity OrderStatusHistory {
+  * id : uuid
+  --
+  order_id : uuid
+  status : string
+  changed_at : datetime
+}
+
+entity Master {
+  * id : uuid
+  --
+  name : string
+  active : boolean
+}
+
+entity Specialization {
+  * master_id : uuid
+  * service_id : uuid
+}
+
+entity TimeSlot {
+  * id : uuid
+  --
+  master_id : uuid
+  starts_at : datetime
+  ends_at : datetime
+  status : string
+}
+
+entity Assignment {
+  * id : uuid
+  --
+  order_id : uuid
+  master_id : uuid
+  slot_id : uuid
+}
+
+entity Payment {
+  * id : uuid
+  --
+  order_id : uuid
+  amount : decimal
+  status : string
+}
+
+entity Review {
+  * id : uuid
+  --
+  order_id : uuid
+  rating : integer
+  comment : string
+}
+
+entity OutboxEvent {
+  * id : uuid
+  --
+  aggregate_id : uuid
+  event_type : string
+  payload : json
+  published_at : datetime
+}
+
+Customer ||--o{ Order
+Order ||--|{ OrderItem
+Service ||--o{ OrderItem
+Order ||--o{ OrderStatusHistory
+Master ||--o{ Specialization
+Service ||--o{ Specialization
+Master ||--o{ TimeSlot
+Order ||--o| Assignment
+Master ||--o{ Assignment
+TimeSlot ||--o| Assignment
+Order ||--o{ Payment
+Order ||--o| Review
+Order ||--o{ OutboxEvent
+@enduml

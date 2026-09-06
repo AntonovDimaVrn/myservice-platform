@@ -1,0 +1,27 @@
+@startuml
+!pragma layout smetana
+title C4 - контекст системы
+left to right direction
+skinparam shadowing false
+skinparam rectangle {
+  BackgroundColor white
+  BorderColor black
+}
+
+actor "Клиент" as client
+actor "Мастер" as master
+actor "Оператор" as operator
+actor "Администратор" as admin
+
+rectangle "MyService Platform\nЗаказ и выполнение услуг" as system
+rectangle "Платёжный провайдер" as payment
+rectangle "Сервис уведомлений" as notify
+
+client --> system : выбирает услугу\nсоздаёт заказ
+master --> system : получает работу\nменяет статус
+operator --> system : подтверждает\nназначает мастера
+admin --> system : управляет\nдоступом и услугами
+system --> payment : создаёт платёж
+system --> notify : отправляет сообщение
+footer MyService Platform
+@enduml

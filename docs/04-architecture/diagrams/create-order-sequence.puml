@@ -1,0 +1,26 @@
+@startuml
+title UML - создание заказа
+autonumber
+skinparam shadowing false
+
+actor Клиент as client
+participant "Order API" as api
+database PostgreSQL as db
+participant "Outbox Worker" as worker
+queue RabbitMQ as rabbit
+
+client -> api : POST /api/v1/orders
+api -> api : Проверить данные
+group Одна транзакция
+  api -> db : INSERT orders
+  api -> db : INSERT outbox_events
+end
+api --> client : 201, orderId, new
+
+loop Пока есть неопубликованные события
+  worker -> db : Получить событие
+  worker -> rabbit : order.created.v1
+  rabbit --> worker : Publisher confirm
+  worker -> db : Указать publishedAt
+end
+@enduml

@@ -1,0 +1,44 @@
+@startuml
+!pragma layout smetana
+title C4 - контейнеры
+left to right direction
+skinparam shadowing false
+skinparam componentStyle rectangle
+
+actor "Клиент" as client
+actor "Сотрудник" as staff
+
+component "Client PWA" as client_ui
+component "Master PWA" as master_ui
+component "Admin UI" as admin_ui
+component "API Gateway" as gateway
+component "Keycloak" as keycloak
+component "Catalog Service" as catalog
+component "Order Service" as orders
+component "Scheduling Service" as scheduling
+component "Notification Service" as notifications
+component "Payment Service" as payments
+component "Analytics Service" as analytics
+queue "RabbitMQ" as rabbit
+database "PostgreSQL\nБазы сервисов" as db
+
+client --> client_ui
+staff --> master_ui
+staff --> admin_ui
+client_ui --> gateway : HTTPS
+master_ui --> gateway : HTTPS
+admin_ui --> gateway : HTTPS
+gateway --> keycloak : OIDC
+gateway --> catalog : REST
+gateway --> orders : REST
+gateway --> scheduling : REST
+gateway --> payments : REST
+catalog --> db
+orders --> db
+scheduling --> db
+payments --> db
+orders --> rabbit : order events
+scheduling --> rabbit : schedule events
+rabbit --> notifications
+rabbit --> analytics
+@enduml

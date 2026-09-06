@@ -1,0 +1,80 @@
+asyncapi: 3.1.0
+info:
+  title: MyService Order Events
+  version: 0.1.0
+  description: События сервиса заказов.
+defaultContentType: application/json
+servers:
+  local:
+    host: rabbitmq:5672
+    protocol: amqp
+    description: Локальный RabbitMQ
+channels:
+  orderCreated:
+    address: order.created.v1
+    messages:
+      orderCreated:
+        $ref: '#/components/messages/OrderCreated'
+    bindings:
+      amqp:
+        is: routingKey
+        exchange:
+          name: orders.events
+          type: topic
+          durable: true
+          autoDelete: false
+        bindingVersion: 0.3.0
+operations:
+  publishOrderCreated:
+    action: send
+    summary: Публикация созданного заказа
+    channel:
+      $ref: '#/channels/orderCreated'
+    messages:
+      - $ref: '#/channels/orderCreated/messages/orderCreated'
+components:
+  messages:
+    OrderCreated:
+      name: order.created.v1
+      title: Заказ создан
+      contentType: application/json
+      payload:
+        $ref: '#/components/schemas/OrderCreatedPayload'
+  schemas:
+    OrderCreatedPayload:
+      type: object
+      additionalProperties: false
+      required:
+        - eventId
+        - eventType
+        - eventVersion
+        - occurredAt
+        - orderId
+        - serviceType
+        - status
+      properties:
+        eventId:
+          type: string
+          format: uuid
+        eventType:
+          type: string
+          const: order.created
+        eventVersion:
+          type: integer
+          const: 1
+        occurredAt:
+          type: string
+          format: date-time
+        orderId:
+          type: string
+          format: uuid
+        serviceType:
+          type: string
+          enum:
+            - dry_cleaning
+            - cleaning
+            - disinsection
+            - disinfection
+        status:
+          type: string
+          const: new
